@@ -1,6 +1,6 @@
 # To-Do App
 
-![alt text](image.png)
+![alt text](https://github.com/Minhaz00/To-Do-App/blob/main/image.png?raw=true)
 
 This To-Do App project demonstrates a microservices architecture using Node.js, Express, and Redis. It comprises two main services: an API Gateway and a ToDo Service. The API Gateway handles client requests and forwards them to the ToDo Service, which manages task data stored in a Redis database. Docker Compose is used to manage the deployment and orchestration of these services.
 
