@@ -1,5 +1,6 @@
 # To-Do App
 
+![alt text](image.png)
 
 ## Project Structure
 
