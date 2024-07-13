@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - api-gateway/**
+      - todo-service/**
 
 jobs:
   build-and-push:
@@ -25,7 +28,17 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
+    - name: Check for changes in directory
+      id: check_changes
+      run: |
+        if git diff --name-only HEAD~1 HEAD | grep -q "^${{ matrix.service }}/"; then
+          echo "changes=true" >> $GITHUB_ENV
+        else
+          echo "changes=false" >> $GITHUB_ENV
+        fi
+
     - name: Build and push image
+      if: env.changes == 'true'
       uses: docker/build-push-action@v4
       with:
         context: ./${{ matrix.service }}
