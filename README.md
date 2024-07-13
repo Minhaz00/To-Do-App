@@ -356,5 +356,5 @@ services:
    To retrieve all tasks:
 
    ```sh
-   curl http://localhost:5000/tasks
+   curl http://localhost:5000/
    ```
