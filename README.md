@@ -1,6 +1,8 @@
 # To-Do App
 
-![alt text](image.png)
+![alt text](image-1.png)
+
+This To-Do App project demonstrates a microservices architecture using Node.js, Express, and Redis. It comprises two main services: an API Gateway and a ToDo Service. The API Gateway handles client requests and forwards them to the ToDo Service, which manages task data stored in a Redis database. Docker Compose is used to manage the deployment and orchestration of these services.
 
 ## Project Structure
 
@@ -24,16 +26,29 @@ todo-app/
 └── docker-compose.yml
 ```
 
+### Directory Breakdown
+
+- **api-gateway/**: Contains the API Gateway code, handling client requests and routing them to the ToDo Service.
+- **todo-service/**: Contains the ToDo Service code, which interacts with Redis to manage tasks.
+- **docker-compose.yml**: Defines the Docker services for the API Gateway, ToDo Service, and Redis.
+
 ## API Gateway
 
 ### `api-gateway/.env`
+
+This file contains environment variables for the API Gateway:
 
 ```plaintext
 PORT=5000
 TODO_SERVICE_URL=http://localhost:8000
 ```
 
+- **PORT**: The port on which the API Gateway runs.
+- **TODO_SERVICE_URL**: The URL of the ToDo Service.
+
 ### `api-gateway/package.json`
+
+This file defines the Node.js project configuration for the API Gateway:
 
 ```json
 {
@@ -53,6 +68,8 @@ TODO_SERVICE_URL=http://localhost:8000
 
 ### `api-gateway/index.js`
 
+This is the main entry point of the API Gateway:
+
 ```javascript
 const express = require('express');
 const dotenv = require('dotenv');
@@ -71,7 +88,13 @@ app.listen(port, () => {
 });
 ```
 
+- **express**: Sets up the Express server.
+- **dotenv**: Loads environment variables from the `.env` file.
+- **routes**: Imports routes from `routes.js`.
+
 ### `api-gateway/routes.js`
+
+This file defines the routes for the API Gateway, using Axios to communicate with the ToDo Service:
 
 ```javascript
 const express = require('express');
@@ -122,16 +145,28 @@ router.delete('/:id', async (req, res) => {
 module.exports = router;
 ```
 
+- **GET /tasks**: Fetches all tasks from the ToDo Service.
+- **GET /tasks/:id**: Fetches a specific task by ID from the ToDo Service.
+- **POST /tasks**: Adds a new task via the ToDo Service.
+- **DELETE /tasks/:id**: Deletes a task by ID via the ToDo Service.
+
 ## ToDo Service
 
 ### `todo-service/.env`
+
+This file contains environment variables for the ToDo Service:
 
 ```plaintext
 PORT=8000
 REDIS_URL=redis://localhost:6379
 ```
 
+- **PORT**: The port on which the ToDo Service runs.
+- **REDIS_URL**: The URL of the Redis database.
+
 ### `todo-service/package.json`
+
+This file defines the Node.js project configuration for the ToDo Service:
 
 ```json
 {
@@ -142,9 +177,6 @@ REDIS_URL=redis://localhost:6379
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -152,10 +184,11 @@ REDIS_URL=redis://localhost:6379
     "uuid": "^10.0.0"
   }
 }
-
 ```
 
 ### `todo-service/index.js`
+
+This is the main entry point of the ToDo Service:
 
 ```javascript
 const express = require('express');
@@ -179,11 +212,17 @@ app.listen(port, () => {
 });
 ```
 
+- **express**: Sets up the Express server.
+- **dotenv**: Loads environment variables from the `.env` file.
+- **todoController**: Handles task-related operations.
+
 ### `todo-service/todoController.js`
+
+This file contains the controller logic for the ToDo Service:
 
 ```javascript
 const redis = require('redis');
-const { v4: uuidv4 } = require('uuid'); // Import UUID library
+const { v4: uuidv4 } = require('uuid');
 const client = redis.createClient({
   url: process.env.REDIS_URL
 });
@@ -192,7 +231,7 @@ client.connect();
 
 exports.getTasks = async (req, res) => {
   try {
-    const tasks = await client.hGetAll('tasks'); // Use hGetAll to get all tasks with their IDs
+    const tasks = await client.hGetAll('tasks');
     const tasksArray = Object.keys(tasks).map(id => ({
       id,
       task: tasks[id]
@@ -206,7 +245,7 @@ exports.getTasks = async (req, res) => {
 exports.getTaskById = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const task = await client.hGet('tasks', taskId); // Get task by ID
+    const task = await client.hGet('tasks', taskId);
     if (task) {
       res.json({ id: taskId, task });
     } else {
@@ -220,8 +259,8 @@ exports.getTaskById = async (req, res) => {
 exports.addTask = async (req, res) => {
   try {
     const task = req.body.task;
-    const taskId = uuidv4(); // Generate a unique ID for the task
-    await client.hSet('tasks', taskId, task); // Store task in a hash with the task ID
+    const taskId = uuidv4();
+    await client.hSet('tasks', taskId, task);
     res.send({ id: taskId, task });
   } catch (error) {
     res.status(500).send(error.message);
@@ -231,7 +270,7 @@ exports.addTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    await client.hDel('tasks', taskId); // Delete the task by ID
+    await client.hDel('tasks', taskId);
     res.send('Task deleted');
   } catch (error) {
     res.status(500).send(error.message);
@@ -239,9 +278,16 @@ exports.deleteTask = async (req, res) => {
 };
 ```
 
-### Docker Compose
+- **getTasks**: Retrieves all tasks from Redis.
+- **getTaskById**: Retrieves a task by ID from Redis.
+- **addTask**: Adds a new task to Redis.
+- **deleteTask**: Deletes a task by ID from Redis.
+
+## Docker Compose
 
 ### `docker-compose.yml`
+
+This file defines the Docker services:
 
 ```yaml
 version: '3.8'
@@ -270,12 +316,45 @@ services:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-
 ```
+
+- **redis**: Uses the Redis image to create a Redis service.
+- **api-gateway**: Builds and runs the API Gateway service.
+- **todo-service**: Builds and runs the ToDo Service.
 
 ## Running the Application
 
-1. Navigate to the root directory of your project.
-2. Run `docker-compose up --build`.
+1. Navigate to the root directory of the project.
 
-This setup will create the API gateway and ToDo services, and use Redis as the database. The client can make requests to the API gateway, which will forward them to the ToDo service, and the tasks will be stored in Redis.
+   ```sh
+   cd todo-app
+   ```
+
+2. Build and start the Docker containers.
+
+   ```sh
+   docker-compose up --build
+   ```
+
+3. The API Gateway should now be running on `http://localhost:5000` and the ToDo Service on `http://localhost:8000`.
+
+4. You can interact with the API Gateway to manage tasks.
+
+   - **GET `http://localhost:5000/`**: Fetches all tasks.
+   - **GET `http://localhost:5000/<task_id>`**: Fetches a specific task by ID.
+   - **POST `http://localhost:5000/`**: Adds a new task.
+   - **DELETE `http://localhost:5000/<task_id>`**: Deletes a task by ID.
+
+   For example, to add two new task:
+
+   ```sh
+   curl -X POST http://localhost:5000/ -H "Content-Type: application/json" -d '{"task": "Sample Task 1"}'
+
+   curl -X POST http://localhost:5000/ -H "Content-Type: application/json" -d '{"task": "Sample Task 2"}'
+   ```
+
+   To retrieve all tasks:
+
+   ```sh
+   curl http://localhost:5000/tasks
+   ```
