@@ -1,5 +1,3 @@
-Sure, here's an example of how you can structure your project and implement the API gateway and ToDo service using Express and Redis.
-
 ### Project Structure
 
 ```
