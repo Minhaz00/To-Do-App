@@ -1,5 +1,7 @@
 # To-Do App
 
+![alt text](https://github.com/Minhaz00/To-Do-App/blob/main/DOC/images/image-7.png?raw=true)
+
 ## Makefile Documentation
 
 ### Overview
