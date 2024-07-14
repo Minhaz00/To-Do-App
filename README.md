@@ -153,7 +153,3 @@ This `Makefile` automates the process of building Docker images, pushing them to
 
 - Ensure the `K8s-deployment-manifests` directory contains the `redis-deployment.yaml`, `todo-service-deployment.yaml`, and `api-gateway-deployment.yaml` files for the Kubernetes deployment to work correctly.
 - Replace `<your-dockerhub-username>` with your actual DockerHub username in the `Makefile`.
-
----
-
-This documentation provides a comprehensive guide to using your `Makefile`, making it easier for others (and yourself) to understand and utilize it effectively.
