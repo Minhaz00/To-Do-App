@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: todo-service
-        image: konami98/todo-service:latest
+        image: minhaz71/todo-service:latest
         ports:
         - containerPort: 8000
         env:

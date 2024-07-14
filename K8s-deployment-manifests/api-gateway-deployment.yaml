@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: konami98/api-gateway:latest
+        image: minhaz71/api-gateway:latest
         ports:
         - containerPort: 5000
         env:
