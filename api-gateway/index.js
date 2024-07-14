@@ -11,5 +11,5 @@ app.use(express.json());
 app.use('/', routes);
 
 app.listen(port, () => {
-  console.log(`API Gateway listening at http://localhost:${port}`);
+  console.log(`API-Gateway service listening at http://localhost:${port}`);
 });
